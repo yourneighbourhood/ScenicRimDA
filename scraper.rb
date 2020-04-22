@@ -1,24 +1,13 @@
-require 'scraperwiki'
-require './scraper'
+require 'mechanize'
+require File.dirname(__FILE__) + '/lib_icon_rest_xml/scraper'
 
-$: << "#{File.dirname(__FILE__)}/.."
+agent = Mechanize.new
+doc = agent.get("https://srr-prod-icon.saas.t1cloud.com/Common/Common/Terms.aspx")
+form = doc.forms.first
+# Tick the box.
+form.checkbox_with(:name => 'ctl00$ctMain$chkAgree$chk1').check
+# Click the button.
+doc = doc.forms.first.submit(doc.forms.first.button_with(:value => "I Agree"), "Accept-Encoding" => "identity")
 
-Bundler.require :development, :test
-
-require 'vcr'
-
-VCR.configure do |c|
-  c.cassette_library_dir = 'spec/cassettes'
-  c.allow_http_connections_when_no_cassette = true
-  c.hook_into :webmock
-  c.default_cassette_options = { record: :new_episodes }
-  c.configure_rspec_metadata!
-end
-
-describe "#scrape_icon_rest_xml", :vcr do
-  context "feed without address" do
-    it "should not error" do
-      scrape_icon_rest_xml("http://epb.swan.wa.gov.au/Pages/XC.Track/SearchApplication.aspx", "d=thisweek&k=LodgementDate&t=282,281,283&o=xml")
-    end
-  end
-end
+# Use the ICON XML scraper.
+scrape_icon_rest_xml("https://srr-prod-icon.saas.t1cloud.com/Pages/XC.Track/SearchApplication.aspx", "d=last28days&o=xml", false, agent)
