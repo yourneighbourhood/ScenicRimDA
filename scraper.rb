@@ -73,3 +73,4 @@ def scrape_icon_rest_xml(base_url, query, debug = false, agent = nil)
     end
   end
 end
+
