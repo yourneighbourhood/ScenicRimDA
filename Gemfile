@@ -1,4 +1,10 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
-gem 'scraperwiki', git: 'https://github.com/openaustralia/scraperwiki-ruby.git', branch: 'morph_defaults'
+gem 'scraperwiki'
 gem 'mechanize'
+
+group :development, :test do
+  gem 'rspec'
+  gem 'vcr'
+  gem 'webmock'
+end
